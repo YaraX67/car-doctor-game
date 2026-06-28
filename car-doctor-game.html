@@ -7,75 +7,69 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0d0f14; --surface: #161a23; --card-bg: #1e2330;
-    --accent: #e8b84b; --accent2: #4be8a0; --danger: #e84b4b;
-    --text: #f0f2f7; --muted: #8890a4; --radius: 24px;
-  }
-  body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 16px; }
-  #intro { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; max-width: 360px; }
-  .logo { font-size: 52px; animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
-  .brand { font-size: 28px; font-weight: 800; color: var(--accent); }
-  .tagline { font-size: 15px; color: var(--muted); line-height: 1.7; }
-  .name-input-wrap { width: 100%; display: flex; flex-direction: column; gap: 8px; }
-  .name-input-wrap label { font-size: 13px; color: var(--muted); text-align: right; }
-  .name-input { width: 100%; background: var(--surface); border: 1px solid #2a3040; border-radius: 14px; padding: 14px 16px; font-family: 'Tajawal', sans-serif; font-size: 16px; color: var(--text); outline: none; text-align: right; }
-  .name-input:focus { border-color: var(--accent); }
-  .stat-row { display: flex; gap: 16px; margin: 8px 0; }
-  .stat { background: var(--surface); border: 1px solid #2a3040; border-radius: 16px; padding: 14px 20px; flex: 1; }
-  .stat-num { font-size: 24px; font-weight: 800; color: var(--accent); }
-  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .start-btn { background: var(--accent); color: #0d0f14; border: none; border-radius: 50px; padding: 16px 48px; font-family: 'Tajawal', sans-serif; font-size: 18px; font-weight: 800; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 24px rgba(232,184,75,0.3); width: 100%; max-width: 280px; }
-  .start-btn:hover { transform: translateY(-2px); }
-  #game { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 400px; gap: 20px; }
-  .progress-wrap { width: 100%; display: flex; align-items: center; gap: 12px; }
-  .progress-bar { flex: 1; height: 6px; background: #2a3040; border-radius: 99px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.4s ease; }
-  .progress-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
-  .score-badge { background: var(--surface); border: 1px solid #2a3040; border-radius: 50px; padding: 6px 16px; font-size: 14px; font-weight: 700; color: var(--accent2); white-space: nowrap; }
-  .card-stack { position: relative; width: 100%; height: 340px; }
-  .card-shadow { position: absolute; width: calc(100% - 32px); left: 16px; height: 320px; background: var(--card-bg); border-radius: var(--radius); border: 1px solid #2a3040; top: 8px; opacity: 0.5; transform: scale(0.97); }
-  .card { position: absolute; width: 100%; height: 320px; background: var(--card-bg); border-radius: var(--radius); border: 1px solid #2a3040; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 24px; gap: 16px; cursor: grab; user-select: none; touch-action: none; top: 0; left: 0; }
-  .card:active { cursor: grabbing; }
-  .card-emoji { font-size: 56px; line-height: 1; }
-  .card-type { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--accent); background: rgba(232,184,75,0.12); padding: 4px 12px; border-radius: 50px; }
-  .card-question { font-size: 19px; font-weight: 700; text-align: center; line-height: 1.5; }
-  .swipe-hints { display: flex; justify-content: space-between; width: 100%; padding: 0 8px; }
-  .hint { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
-  .hint-right { color: var(--accent2); }
-  .hint-left { color: var(--danger); flex-direction: row-reverse; }
-  .hint-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .hint-right .hint-icon { background: rgba(75,232,160,0.15); }
-  .hint-left .hint-icon { background: rgba(232,75,75,0.15); }
-  .card-label { position: absolute; top: 24px; font-size: 22px; font-weight: 800; letter-spacing: 2px; padding: 8px 20px; border-radius: 12px; border: 3px solid; opacity: 0; transition: opacity 0.1s; pointer-events: none; }
-  .card-label.yes { right: 16px; color: var(--accent2); border-color: var(--accent2); background: rgba(75,232,160,0.1); }
-  .card-label.no { left: 16px; color: var(--danger); border-color: var(--danger); background: rgba(232,75,75,0.1); }
-  #answer { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 400px; gap: 16px; }
-  .answer-card { width: 100%; background: var(--card-bg); border-radius: var(--radius); border: 1px solid #2a3040; padding: 28px 24px; display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; }
-  .result-badge { font-size: 13px; font-weight: 700; letter-spacing: 1px; padding: 6px 16px; border-radius: 50px; }
-  .result-badge.correct { background: rgba(75,232,160,0.15); color: var(--accent2); }
-  .result-badge.wrong { background: rgba(232,75,75,0.15); color: var(--danger); }
-  .answer-emoji { font-size: 48px; }
-  .answer-title { font-size: 20px; font-weight: 800; }
-  .answer-explain { font-size: 15px; color: var(--muted); line-height: 1.7; }
-  .car-doctor-tip { background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); border-radius: 16px; padding: 14px 18px; width: 100%; }
-  .tip-header { font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: 1px; margin-bottom: 6px; }
-  .tip-text { font-size: 14px; color: var(--text); line-height: 1.6; }
-  .next-btn { background: var(--accent); color: #0d0f14; border: none; border-radius: 50px; padding: 14px 40px; font-family: 'Tajawal', sans-serif; font-size: 17px; font-weight: 800; cursor: pointer; width: 100%; }
-  #result { display: none; flex-direction: column; align-items: center; text-align: center; gap: 20px; max-width: 360px; }
-  .result-ring { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .result-ring-inner { width: 90px; height: 90px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; color: var(--accent); }
-  .result-title { font-size: 26px; font-weight: 800; }
-  .result-sub { font-size: 15px; color: var(--muted); line-height: 1.7; }
-  .share-section { background: var(--surface); border: 1px solid #2a3040; border-radius: 20px; padding: 20px; width: 100%; }
-  .share-title { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
-  .share-text { font-size: 15px; font-weight: 600; color: var(--text); background: var(--bg); border-radius: 12px; padding: 12px; line-height: 1.6; margin-bottom: 12px; border: 1px solid #2a3040; }
-  .copy-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 50px; padding: 10px 24px; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 8px; }
-  .retry-btn { background: transparent; border: none; color: var(--muted); font-family: 'Tajawal', sans-serif; font-size: 14px; cursor: pointer; text-decoration: underline; }
-  @keyframes popIn { 0%{transform:scale(0.85);opacity:0} 100%{transform:scale(1);opacity:1} }
-  .animate-pop { animation: popIn 0.3s ease forwards; }
-  .saved-notice { font-size: 12px; color: var(--accent2); margin-top: 4px; }
+  :root { --bg:#0d0f14;--surface:#161a23;--card-bg:#1e2330;--accent:#e8b84b;--accent2:#4be8a0;--danger:#e84b4b;--text:#f0f2f7;--muted:#8890a4;--radius:24px; }
+  body { font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:16px; }
+  #intro { display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;max-width:360px; }
+  .logo { font-size:52px;animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .brand { font-size:28px;font-weight:800;color:var(--accent); }
+  .tagline { font-size:15px;color:var(--muted);line-height:1.7; }
+  .name-input-wrap { width:100%;display:flex;flex-direction:column;gap:8px; }
+  .name-input-wrap label { font-size:13px;color:var(--muted);text-align:right; }
+  .name-input { width:100%;background:var(--surface);border:1px solid #2a3040;border-radius:14px;padding:14px 16px;font-family:'Tajawal',sans-serif;font-size:16px;color:var(--text);outline:none;text-align:right; }
+  .name-input:focus { border-color:var(--accent); }
+  .stat-row { display:flex;gap:16px;margin:8px 0; }
+  .stat { background:var(--surface);border:1px solid #2a3040;border-radius:16px;padding:14px 20px;flex:1; }
+  .stat-num { font-size:24px;font-weight:800;color:var(--accent); }
+  .stat-label { font-size:12px;color:var(--muted);margin-top:2px; }
+  .start-btn { background:var(--accent);color:#0d0f14;border:none;border-radius:50px;padding:16px 48px;font-family:'Tajawal',sans-serif;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 24px rgba(232,184,75,0.3);width:100%;max-width:280px; }
+  #game { display:none;flex-direction:column;align-items:center;width:100%;max-width:400px;gap:20px; }
+  .progress-wrap { width:100%;display:flex;align-items:center;gap:12px; }
+  .progress-bar { flex:1;height:6px;background:#2a3040;border-radius:99px;overflow:hidden; }
+  .progress-fill { height:100%;background:var(--accent);border-radius:99px;transition:width 0.4s ease; }
+  .progress-label { font-size:13px;color:var(--muted);white-space:nowrap; }
+  .score-badge { background:var(--surface);border:1px solid #2a3040;border-radius:50px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--accent2);white-space:nowrap; }
+  .card-stack { position:relative;width:100%;height:340px; }
+  .card-shadow { position:absolute;width:calc(100% - 32px);left:16px;height:320px;background:var(--card-bg);border-radius:var(--radius);border:1px solid #2a3040;top:8px;opacity:0.5;transform:scale(0.97); }
+  .card { position:absolute;width:100%;height:320px;background:var(--card-bg);border-radius:var(--radius);border:1px solid #2a3040;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;gap:16px;cursor:grab;user-select:none;touch-action:none;top:0;left:0; }
+  .card-emoji { font-size:56px;line-height:1; }
+  .card-type { font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--accent);background:rgba(232,184,75,0.12);padding:4px 12px;border-radius:50px; }
+  .card-question { font-size:19px;font-weight:700;text-align:center;line-height:1.5; }
+  .swipe-hints { display:flex;justify-content:space-between;width:100%;padding:0 8px; }
+  .hint { display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600; }
+  .hint-right { color:var(--accent2); }
+  .hint-left { color:var(--danger);flex-direction:row-reverse; }
+  .hint-icon { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px; }
+  .hint-right .hint-icon { background:rgba(75,232,160,0.15); }
+  .hint-left .hint-icon { background:rgba(232,75,75,0.15); }
+  .card-label { position:absolute;top:24px;font-size:22px;font-weight:800;letter-spacing:2px;padding:8px 20px;border-radius:12px;border:3px solid;opacity:0;transition:opacity 0.1s;pointer-events:none; }
+  .card-label.yes { right:16px;color:var(--accent2);border-color:var(--accent2);background:rgba(75,232,160,0.1); }
+  .card-label.no { left:16px;color:var(--danger);border-color:var(--danger);background:rgba(232,75,75,0.1); }
+  #answer { display:none;flex-direction:column;align-items:center;width:100%;max-width:400px;gap:16px; }
+  .answer-card { width:100%;background:var(--card-bg);border-radius:var(--radius);border:1px solid #2a3040;padding:28px 24px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center; }
+  .result-badge { font-size:13px;font-weight:700;letter-spacing:1px;padding:6px 16px;border-radius:50px; }
+  .result-badge.correct { background:rgba(75,232,160,0.15);color:var(--accent2); }
+  .result-badge.wrong { background:rgba(232,75,75,0.15);color:var(--danger); }
+  .answer-emoji { font-size:48px; }
+  .answer-title { font-size:20px;font-weight:800; }
+  .answer-explain { font-size:15px;color:var(--muted);line-height:1.7; }
+  .car-doctor-tip { background:rgba(232,184,75,0.08);border:1px solid rgba(232,184,75,0.2);border-radius:16px;padding:14px 18px;width:100%; }
+  .tip-header { font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:6px; }
+  .tip-text { font-size:14px;color:var(--text);line-height:1.6; }
+  .next-btn { background:var(--accent);color:#0d0f14;border:none;border-radius:50px;padding:14px 40px;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:800;cursor:pointer;width:100%; }
+  #result { display:none;flex-direction:column;align-items:center;text-align:center;gap:20px;max-width:360px; }
+  .result-ring { width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center; }
+  .result-ring-inner { width:90px;height:90px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:var(--accent); }
+  .result-title { font-size:26px;font-weight:800; }
+  .result-sub { font-size:15px;color:var(--muted);line-height:1.7; }
+  .share-section { background:var(--surface);border:1px solid #2a3040;border-radius:20px;padding:20px;width:100%; }
+  .share-title { font-size:14px;color:var(--muted);margin-bottom:12px; }
+  .share-text { font-size:15px;font-weight:600;color:var(--text);background:var(--bg);border-radius:12px;padding:12px;line-height:1.6;margin-bottom:12px;border:1px solid #2a3040; }
+  .copy-btn { background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:50px;padding:10px 24px;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px; }
+  .retry-btn { background:transparent;border:none;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:14px;cursor:pointer;text-decoration:underline; }
+  .saved-notice { font-size:12px;color:var(--accent2);margin-top:6px;text-align:center; }
+  @keyframes popIn{0%{transform:scale(0.85);opacity:0}100%{transform:scale(1);opacity:1}}
+  .animate-pop { animation:popIn 0.3s ease forwards; }
 </style>
 </head>
 <body>
@@ -85,7 +79,7 @@
   <p class="tagline">كم تعرف عن سيارتك وتأمينك؟<br>سوايب يمين ✅ صح &nbsp;|&nbsp; سوايب يسار ❌ خطأ</p>
   <div class="name-input-wrap">
     <label>اكتب اسمك عشان نحفظ نتيجتك 👇</label>
-    <input class="name-input" id="playerName" type="text" placeholder="اسمك هنا..." maxlength="30" />
+    <input class="name-input" id="playerName" type="text" placeholder="اسمك هنا..." maxlength="30"/>
   </div>
   <div class="stat-row">
     <div class="stat"><div class="stat-num">8</div><div class="stat-label">أسئلة</div></div>
@@ -106,8 +100,8 @@
     <div class="card" id="mainCard">
       <div class="card-label yes" id="labelYes">صح ✓</div>
       <div class="card-label no" id="labelNo">خطأ ✗</div>
-      <div class="card-emoji" id="cardEmoji">⚠️</div>
-      <div class="card-type" id="cardType">تحذير</div>
+      <div class="card-emoji" id="cardEmoji"></div>
+      <div class="card-type" id="cardType"></div>
       <div class="card-question" id="cardQuestion"></div>
     </div>
   </div>
@@ -118,9 +112,9 @@
 </div>
 
 <div id="answer">
-  <div class="answer-card animate-pop" id="answerCard">
-    <div class="result-badge" id="resultBadge">✓ صحيح!</div>
-    <div class="answer-emoji" id="answerEmoji">✅</div>
+  <div class="answer-card" id="answerCard">
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="answer-emoji" id="answerEmoji"></div>
     <div class="answer-title" id="answerTitle"></div>
     <div class="answer-explain" id="answerExplain"></div>
     <div class="car-doctor-tip">
@@ -133,7 +127,7 @@
 
 <div id="result">
   <div class="result-ring" id="resultRing">
-    <div class="result-ring-inner" id="scoreDisplay">0/8</div>
+    <div class="result-ring-inner" id="scoreDisplay"></div>
   </div>
   <div class="result-title" id="resultTitle"></div>
   <div class="result-sub" id="resultSub"></div>
@@ -147,26 +141,35 @@
 </div>
 
 <script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDkjRn0zmLwwPnoKOh5QZhY0BGXE39Cz3zBqGEmR_IbniPHqSAhCKZ6f72PoTEQro/exec';
+
 const questions = [
-  { emoji:"🔴", type:"ضوء تحذير", question:"ضوء المحرك الأحمر يعني لازم أوقف فوراً؟", answer:true, title:"صح تماماً ✅", explain:"الضوء الأحمر للمحرك خطر فعلي — استمرار القيادة ممكن يحرق المحرك بالكامل.", tip:"ضوء أصفر = راقب وروح الورشة. ضوء أحمر = أوقف فوراً وما تحرك السيارة." },
-  { emoji:"💧", type:"صيانة", question:"ممكن أضيف ماء عادي لرديتر السيارة بدل سائل التبريد؟", answer:false, title:"خطأ ❌", explain:"الماء العادي يسبب صدأ وتآكل في نظام التبريد، ويغلي بسرعة في الحر.", tip:"دايماً استخدم coolant مخفف بالنسبة الصحيحة. في الطوارئ فقط: ماء نظيف مؤقتاً وروح الورشة." },
-  { emoji:"🚗💥", type:"تأمين", question:"لو صدمت سيارة من الخلف، التأمين الشامل يغطي سيارتك وسيارة الثاني؟", answer:true, title:"صح ✅", explain:"التأمين الشامل يغطي أضرار سيارتك + أضرار الطرف الثاني في حوادث كثيرة.", tip:"لكن تأكد من شروط البوليصة — بعض البنود تستثني حالات معينة." },
-  { emoji:"⛽", type:"معرفة عامة", question:"الضوء البرتقالي للوقود يعني في بنزين يكفي لـ 50 كم تقريباً؟", answer:false, title:"يعتمد! ⚠️", explain:"في أغلب السيارات، الضوء يضيء لما تبقى 5-15 لتر — تكفي 50-80 كم حسب السيارة.", tip:"لا تعتمد على هذا الحساب في الصحراء. اعبي بنزين كل ما وصل ربع الخزان." },
-  { emoji:"📞", type:"تأمين", question:"لو صارت حادثة، لازم أبلغ شركة التأمين خلال 24 ساعة؟", answer:true, title:"صح ✅", explain:"التأخير في الإبلاغ ممكن يعرض تغطيتك للخطر أو يعقد عملية التعويض.", tip:"أول شيء: صوّر الحادثة. ثاني شيء: اتصل بالتأمين قبل تحريك السيارة إن أمكن." },
-  { emoji:"🛞", type:"صيانة", question:"ضغط الإطارات يتأثر بدرجة حرارة الجو؟", answer:true, title:"صح تماماً ✅", explain:"كل 10 درجات انخفاض في الحرارة = ينخفض الضغط تقريباً 1 PSI. وفي السعودية الحر يرفعه.", tip:"افحص ضغط الإطارات صباحاً قبل تشغيل السيارة وكل شهر تقريباً." },
-  { emoji:"🔧", type:"صيانة", question:"تغيير الزيت كل 5000 كم ضروري لكل سيارة؟", answer:false, title:"مو بالضرورة ❌", explain:"السيارات الحديثة وزيوت الـ full synthetic تتحمل 10,000 إلى 15,000 كم.", tip:"ارجع لكتيب السيارة — ما في رقم ثابت للكل." },
-  { emoji:"🌧️", type:"تأمين", question:"الفيضانات والأمطار الثقيلة مغطاة في التأمين الشامل؟", answer:false, title:"ليس دائماً ⚠️", explain:"كثير من بوليصات التأمين الشامل تستثني الكوارث الطبيعية أو تحتاج rider إضافي.", tip:"في السعودية مهم تتأكد من هذه النقطة — بعض المناطق فيها أمطار موسمية ثقيلة." }
+  {emoji:"🔴",type:"ضوء تحذير",question:"ضوء المحرك الأحمر يعني لازم أوقف فوراً؟",answer:true,title:"صح تماماً ✅",explain:"الضوء الأحمر للمحرك خطر فعلي — استمرار القيادة ممكن يحرق المحرك بالكامل.",tip:"ضوء أصفر = راقب وروح الورشة. ضوء أحمر = أوقف فوراً وما تحرك السيارة."},
+  {emoji:"💧",type:"صيانة",question:"ممكن أضيف ماء عادي لرديتر السيارة بدل سائل التبريد؟",answer:false,title:"خطأ ❌",explain:"الماء العادي يسبب صدأ وتآكل في نظام التبريد، ويغلي بسرعة في الحر.",tip:"دايماً استخدم coolant مخفف. في الطوارئ فقط: ماء نظيف مؤقتاً وروح الورشة."},
+  {emoji:"🚗💥",type:"تأمين",question:"لو صدمت سيارة من الخلف، التأمين الشامل يغطي سيارتك وسيارة الثاني؟",answer:true,title:"صح ✅",explain:"التأمين الشامل يغطي أضرار سيارتك + أضرار الطرف الثاني في حوادث كثيرة.",tip:"لكن تأكد من شروط البوليصة — بعض البنود تستثني حالات معينة."},
+  {emoji:"⛽",type:"معرفة عامة",question:"الضوء البرتقالي للوقود يعني في بنزين يكفي لـ 50 كم تقريباً؟",answer:false,title:"يعتمد! ⚠️",explain:"في أغلب السيارات، الضوء يضيء لما تبقى 5-15 لتر — تكفي 50-80 كم حسب السيارة.",tip:"لا تعتمد على هذا الحساب في الصحراء. اعبي بنزين كل ما وصل ربع الخزان."},
+  {emoji:"📞",type:"تأمين",question:"لو صارت حادثة، لازم أبلغ شركة التأمين خلال 24 ساعة؟",answer:true,title:"صح ✅",explain:"التأخير في الإبلاغ ممكن يعرض تغطيتك للخطر أو يعقد عملية التعويض.",tip:"أول شيء: صوّر الحادثة. ثاني شيء: اتصل بالتأمين قبل تحريك السيارة إن أمكن."},
+  {emoji:"🛞",type:"صيانة",question:"ضغط الإطارات يتأثر بدرجة حرارة الجو؟",answer:true,title:"صح تماماً ✅",explain:"كل 10 درجات انخفاض في الحرارة = ينخفض الضغط تقريباً 1 PSI.",tip:"افحص ضغط الإطارات صباحاً قبل تشغيل السيارة وكل شهر تقريباً."},
+  {emoji:"🔧",type:"صيانة",question:"تغيير الزيت كل 5000 كم ضروري لكل سيارة؟",answer:false,title:"مو بالضرورة ❌",explain:"السيارات الحديثة وزيوت الـ full synthetic تتحمل 10,000 إلى 15,000 كم.",tip:"ارجع لكتيب السيارة — ما في رقم ثابت للكل."},
+  {emoji:"🌧️",type:"تأمين",question:"الفيضانات والأمطار الثقيلة مغطاة في التأمين الشامل؟",answer:false,title:"ليس دائماً ⚠️",explain:"كثير من بوليصات التأمين الشامل تستثني الكوارث الطبيعية أو تحتاج rider إضافي.",tip:"في السعودية مهم تتأكد من هذه النقطة — بعض المناطق فيها أمطار موسمية ثقيلة."}
 ];
 
-let current = 0, score = 0, playerName = '', isDragging = false, startX = 0, currentX = 0;
-const card = document.getElementById('mainCard');
-const labelYes = document.getElementById('labelYes');
-const labelNo = document.getElementById('labelNo');
+let current=0, score=0, playerName='', isDragging=false, startX=0, currentX=0;
+const card=document.getElementById('mainCard');
+const labelYes=document.getElementById('labelYes');
+const labelNo=document.getElementById('labelNo');
 
-async function saveResult(name, score, total) {
-  const key = 'result:' + Date.now();
-  const data = JSON.stringify({ name, score, total, pct: Math.round(score/total*100), ts: new Date().toISOString() });
-  try { await window.storage.set(key, data, true); return true; } catch(e) { return false; }
+async function saveToSheets(name, score, total) {
+  try {
+    const data = { name, score, total, pct: Math.round(score/total*100), ts: new Date().toISOString() };
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return true;
+  } catch(e) { return false; }
 }
 
 function startGame() {
@@ -182,107 +185,97 @@ function loadCard() {
   document.getElementById('cardEmoji').textContent = q.emoji;
   document.getElementById('cardType').textContent = q.type;
   document.getElementById('cardQuestion').textContent = q.question;
-  card.style.transform = ''; card.style.opacity = '';
-  labelYes.style.opacity = '0'; labelNo.style.opacity = '0';
-  const pct = (current / questions.length) * 100;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = `${current + 1} / ${questions.length}`;
+  card.style.transform=''; card.style.opacity='';
+  labelYes.style.opacity='0'; labelNo.style.opacity='0';
+  document.getElementById('progressFill').style.width = (current/questions.length*100)+'%';
+  document.getElementById('progressLabel').textContent = `${current+1} / ${questions.length}`;
   document.getElementById('scoreBadge').textContent = `${score} ✓`;
 }
 
 function setupDrag() {
   card.addEventListener('mousedown', dragStart);
-  card.addEventListener('touchstart', dragStart, { passive: true });
+  card.addEventListener('touchstart', dragStart, {passive:true});
   document.addEventListener('mousemove', dragMove);
-  document.addEventListener('touchmove', dragMove, { passive: true });
+  document.addEventListener('touchmove', dragMove, {passive:true});
   document.addEventListener('mouseup', dragEnd);
   document.addEventListener('touchend', dragEnd);
 }
 
-function dragStart(e) { isDragging = true; startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX; }
-
+function dragStart(e) { isDragging=true; startX=e.type==='touchstart'?e.touches[0].clientX:e.clientX; }
 function dragMove(e) {
-  if (!isDragging) return;
-  currentX = (e.type === 'touchmove' ? e.touches[0].clientX : e.clientX) - startX;
-  card.style.transform = `translateX(${currentX}px) rotate(${currentX * 0.08}deg)`;
-  const ratio = Math.min(Math.abs(currentX) / 80, 1);
-  if (currentX > 20) { labelYes.style.opacity = ratio; labelNo.style.opacity = '0'; }
-  else if (currentX < -20) { labelNo.style.opacity = ratio; labelYes.style.opacity = '0'; }
-  else { labelYes.style.opacity = '0'; labelNo.style.opacity = '0'; }
+  if(!isDragging) return;
+  currentX=(e.type==='touchmove'?e.touches[0].clientX:e.clientX)-startX;
+  card.style.transform=`translateX(${currentX}px) rotate(${currentX*0.08}deg)`;
+  const r=Math.min(Math.abs(currentX)/80,1);
+  if(currentX>20){labelYes.style.opacity=r;labelNo.style.opacity='0';}
+  else if(currentX<-20){labelNo.style.opacity=r;labelYes.style.opacity='0';}
+  else{labelYes.style.opacity='0';labelNo.style.opacity='0';}
 }
-
 function dragEnd() {
-  if (!isDragging) return;
-  isDragging = false;
-  if (Math.abs(currentX) > 80) { animateSwipe(currentX > 0); }
-  else { card.style.transform = ''; labelYes.style.opacity = '0'; labelNo.style.opacity = '0'; }
-  currentX = 0;
+  if(!isDragging) return;
+  isDragging=false;
+  if(Math.abs(currentX)>80){animateSwipe(currentX>0);}
+  else{card.style.transform='';labelYes.style.opacity='0';labelNo.style.opacity='0';}
+  currentX=0;
 }
-
 function animateSwipe(right) {
-  card.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
-  card.style.transform = right ? 'translateX(130%) rotate(15deg)' : 'translateX(-130%) rotate(-15deg)';
-  card.style.opacity = '0';
-  setTimeout(() => { card.style.transition = ''; showAnswer(right); }, 400);
+  card.style.transition='transform 0.4s ease,opacity 0.4s ease';
+  card.style.transform=right?'translateX(130%) rotate(15deg)':'translateX(-130%) rotate(-15deg)';
+  card.style.opacity='0';
+  setTimeout(()=>{card.style.transition='';showAnswer(right);},400);
 }
-
 function showAnswer(userSaidTrue) {
-  const q = questions[current];
-  const correct = userSaidTrue === q.answer;
-  if (correct) score++;
-  document.getElementById('game').style.display = 'none';
-  document.getElementById('answer').style.display = 'flex';
-  const badge = document.getElementById('resultBadge');
-  badge.textContent = correct ? '✓ صحيح!' : '✗ خطأ';
-  badge.className = 'result-badge ' + (correct ? 'correct' : 'wrong');
-  document.getElementById('answerEmoji').textContent = correct ? '✅' : '❌';
-  document.getElementById('answerTitle').textContent = q.title;
-  document.getElementById('answerExplain').textContent = q.explain;
-  document.getElementById('tipText').textContent = q.tip;
-  document.getElementById('nextBtn').textContent = current < questions.length - 1 ? 'السؤال التالي ←' : 'شوف نتيجتي 🏆';
-  document.getElementById('answerCard').classList.remove('animate-pop');
-  void document.getElementById('answerCard').offsetWidth;
-  document.getElementById('answerCard').classList.add('animate-pop');
+  const q=questions[current];
+  const correct=userSaidTrue===q.answer;
+  if(correct) score++;
+  document.getElementById('game').style.display='none';
+  document.getElementById('answer').style.display='flex';
+  const badge=document.getElementById('resultBadge');
+  badge.textContent=correct?'✓ صحيح!':'✗ خطأ';
+  badge.className='result-badge '+(correct?'correct':'wrong');
+  document.getElementById('answerEmoji').textContent=correct?'✅':'❌';
+  document.getElementById('answerTitle').textContent=q.title;
+  document.getElementById('answerExplain').textContent=q.explain;
+  document.getElementById('tipText').textContent=q.tip;
+  document.getElementById('nextBtn').textContent=current<questions.length-1?'السؤال التالي ←':'شوف نتيجتي 🏆';
+  const ac=document.getElementById('answerCard');
+  ac.classList.remove('animate-pop'); void ac.offsetWidth; ac.classList.add('animate-pop');
 }
-
 function nextCard() {
   current++;
-  document.getElementById('answer').style.display = 'none';
-  if (current >= questions.length) { showResult(); }
-  else { document.getElementById('game').style.display = 'flex'; loadCard(); }
+  document.getElementById('answer').style.display='none';
+  if(current>=questions.length){showResult();}
+  else{document.getElementById('game').style.display='flex';loadCard();}
 }
-
 async function showResult() {
-  document.getElementById('result').style.display = 'flex';
-  const pct = Math.round((score / questions.length) * 100);
-  document.getElementById('resultRing').style.background = `conic-gradient(var(--accent) ${pct}%, #2a3040 0%)`;
-  document.getElementById('scoreDisplay').textContent = `${score}/${questions.length}`;
-  let title, sub;
-  if (score >= 7) { title = '🏆 خبير السيارات!'; sub = 'معرفتك فوق المتوسط بكثير. أنت من النوع اللي ما يحتاج يتصل بأحد.'; }
-  else if (score >= 5) { title = '👍 مو بطال!'; sub = 'عندك أساس زين، بس في فجوات ممكن تكلفك فلوس أو مشاكل.'; }
-  else if (score >= 3) { title = '⚠️ تحتاج تعرف أكثر'; sub = 'مو عيب — المشكلة لما يصير شيء ومافيش أحد يوجهك.'; }
-  else { title = '🆘 Car Doctor ضروري لك!'; sub = 'القيادة بدون معرفة = مخاطرة. Car Doctor موجود يساعدك.'; }
-  document.getElementById('resultTitle').textContent = title;
-  document.getElementById('resultSub').textContent = sub;
-  const shareMsg = `🚗 جربت تحدي Car Doctor!\nنتيجتي: ${score}/${questions.length} (${pct}%)\n\n${title}\n\nكم تعرف عن سيارتك؟ جرب وشوف 👇`;
-  document.getElementById('shareText').textContent = shareMsg;
-  const saved = await saveResult(playerName, score, questions.length);
-  document.getElementById('savedNotice').textContent = saved ? '✅ نتيجتك اتحفظت!' : '';
+  document.getElementById('result').style.display='flex';
+  const pct=Math.round(score/questions.length*100);
+  document.getElementById('resultRing').style.background=`conic-gradient(var(--accent) ${pct}%,#2a3040 0%)`;
+  document.getElementById('scoreDisplay').textContent=`${score}/${questions.length}`;
+  let title,sub;
+  if(score>=7){title='🏆 خبير السيارات!';sub='معرفتك فوق المتوسط بكثير!';}
+  else if(score>=5){title='👍 مو بطال!';sub='عندك أساس زين، بس في فجوات ممكن تكلفك فلوس.';}
+  else if(score>=3){title='⚠️ تحتاج تعرف أكثر';sub='المشكلة لما يصير شيء ومافيش أحد يوجهك.';}
+  else{title='🆘 Car Doctor ضروري لك!';sub='القيادة بدون معرفة = مخاطرة.';}
+  document.getElementById('resultTitle').textContent=title;
+  document.getElementById('resultSub').textContent=sub;
+  document.getElementById('shareText').textContent=`🚗 جربت تحدي Car Doctor!\nنتيجتي: ${score}/${questions.length} (${pct}%)\n\n${title}\n\nكم تعرف عن سيارتك؟ جرب وشوف 👇`;
+  document.getElementById('savedNotice').textContent='⏳ جاري حفظ نتيجتك...';
+  const saved=await saveToSheets(playerName, score, questions.length);
+  document.getElementById('savedNotice').textContent=saved?'✅ نتيجتك اتحفظت في السجل!':'';
 }
-
 function copyShare() {
-  navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(() => {
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = '✅ تم النسخ!';
-    setTimeout(() => btn.textContent = '📋 انسخ وشارك', 2000);
+  navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(()=>{
+    const btn=document.querySelector('.copy-btn');
+    btn.textContent='✅ تم النسخ!';
+    setTimeout(()=>btn.textContent='📋 انسخ وشارك',2000);
   });
 }
-
 function restartGame() {
-  current = 0; score = 0;
-  document.getElementById('result').style.display = 'none';
-  document.getElementById('intro').style.display = 'flex';
-  document.getElementById('playerName').value = '';
+  current=0;score=0;
+  document.getElementById('result').style.display='none';
+  document.getElementById('intro').style.display='flex';
+  document.getElementById('playerName').value='';
 }
 </script>
 </body>
