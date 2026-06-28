@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Doctor – Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0f14; --surface: #161a23; --card: #1e2330;
+    --accent: #e8b84b; --green: #4be8a0; --red: #e84b4b;
+    --text: #f0f2f7; --muted: #8890a4;
+  }
+  body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; padding: 20px 16px 40px; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo { font-size: 32px; }
+  .brand { font-size: 22px; font-weight: 800; color: var(--accent); }
+  .brand-sub { font-size: 12px; color: var(--muted); }
+  .refresh-btn { background: var(--surface); border: 1px solid #2a3040; color: var(--text); border-radius: 50px; padding: 8px 18px; font-family: 'Tajawal', sans-serif; font-size: 14px; cursor: pointer; }
+  .refresh-btn:hover { border-color: var(--accent); }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media(min-width:500px){ .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .stat-card { background: var(--surface); border: 1px solid #2a3040; border-radius: 18px; padding: 16px; text-align: center; }
+  .stat-num { font-size: 30px; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .section-title { font-size: 16px; font-weight: 700; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+
+  /* Chart bar */
+  .dist-wrap { background: var(--surface); border: 1px solid #2a3040; border-radius: 18px; padding: 20px; margin-bottom: 24px; }
+  .dist-bars { display: flex; flex-direction: column; gap: 10px; }
+  .dist-row { display: flex; align-items: center; gap: 10px; }
+  .dist-label { font-size: 13px; color: var(--muted); width: 60px; text-align: left; flex-shrink: 0; }
+  .dist-bar-bg { flex: 1; height: 24px; background: #2a3040; border-radius: 8px; overflow: hidden; }
+  .dist-bar-fill { height: 100%; border-radius: 8px; transition: width 0.6s ease; display: flex; align-items: center; justify-content: flex-end; padding-left: 8px; font-size: 12px; font-weight: 700; color: #0d0f14; }
+  .dist-count { font-size: 13px; color: var(--muted); width: 28px; text-align: center; flex-shrink: 0; }
+
+  /* Players table */
+  .players-wrap { background: var(--surface); border: 1px solid #2a3040; border-radius: 18px; overflow: hidden; margin-bottom: 24px; }
+  .players-table { width: 100%; border-collapse: collapse; }
+  .players-table th { padding: 14px 16px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.5px; text-align: right; border-bottom: 1px solid #2a3040; }
+  .players-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #1a1f2e; }
+  .players-table tr:last-child td { border-bottom: none; }
+  .players-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .score-pill { display: inline-block; padding: 3px 12px; border-radius: 50px; font-size: 13px; font-weight: 700; }
+  .score-high { background: rgba(75,232,160,0.15); color: var(--green); }
+  .score-mid { background: rgba(232,184,75,0.15); color: var(--accent); }
+  .score-low { background: rgba(232,75,75,0.15); color: var(--red); }
+  .time-cell { font-size: 12px; color: var(--muted); }
+
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
+  .empty-emoji { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 15px; line-height: 1.6; }
+
+  .loading { text-align: center; padding: 32px; color: var(--muted); font-size: 15px; }
+
+  .clear-btn { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 50px; padding: 8px 18px; font-family: 'Tajawal', sans-serif; font-size: 13px; cursor: pointer; }
+  .clear-btn:hover { background: rgba(232,75,75,0.1); }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">🩺</div>
+    <div>
+      <div class="brand">Car Doctor</div>
+      <div class="brand-sub">لوحة النتائج — خاصة فيك</div>
+    </div>
+  </div>
+  <button class="refresh-btn" onclick="loadData()">🔄 تحديث</button>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-num" id="totalPlayers">—</div><div class="stat-label">لاعب</div></div>
+  <div class="stat-card"><div class="stat-num" id="avgScore">—</div><div class="stat-label">متوسط النتيجة</div></div>
+  <div class="stat-card"><div class="stat-num" id="topScore">—</div><div class="stat-label">أعلى نتيجة</div></div>
+  <div class="stat-card"><div class="stat-num" id="passRate">—</div><div class="stat-label">نسبة النجاح</div></div>
+</div>
+
+<div class="dist-wrap">
+  <div class="section-title">توزيع النتائج</div>
+  <div class="dist-bars" id="distBars"><div class="loading">جاري التحميل...</div></div>
+</div>
+
+<div class="actions">
+  <div class="section-title" style="margin:0">آخر اللاعبين</div>
+  <button class="clear-btn" onclick="clearData()">🗑 مسح الكل</button>
+</div>
+
+<div class="players-wrap">
+  <div id="playersContent"><div class="loading">جاري التحميل...</div></div>
+</div>
+
+<script>
+async function loadData() {
+  try {
+    const listResult = await window.storage.list('result:', true);
+    if (!listResult || !listResult.keys || listResult.keys.length === 0) {
+      showEmpty();
+      return;
+    }
+
+    const records = [];
+    for (const key of listResult.keys) {
+      try {
+        const r = await window.storage.get(key, true);
+        if (r && r.value) records.push(JSON.parse(r.value));
+      } catch(e) {}
+    }
+
+    records.sort((a,b) => new Date(b.ts) - new Date(a.ts));
+    renderStats(records);
+    renderDist(records);
+    renderTable(records);
+  } catch(e) {
+    document.getElementById('playersContent').innerHTML = `<div class="loading">تعذر التحميل — ${e.message}</div>`;
+  }
+}
+
+function renderStats(records) {
+  const total = records.length;
+  const avg = total ? (records.reduce((s,r) => s + r.score, 0) / total).toFixed(1) : '—';
+  const top = total ? Math.max(...records.map(r => r.score)) : '—';
+  const pass = total ? Math.round(records.filter(r => r.score >= 5).length / total * 100) + '%' : '—';
+  document.getElementById('totalPlayers').textContent = total;
+  document.getElementById('avgScore').textContent = avg;
+  document.getElementById('topScore').textContent = top + (total ? '/8' : '');
+  document.getElementById('passRate').textContent = pass;
+}
+
+function renderDist(records) {
+  const bins = [
+    { label: '7–8 🏆', min: 7, max: 8, color: '#4be8a0' },
+    { label: '5–6 👍', min: 5, max: 6, color: '#e8b84b' },
+    { label: '3–4 ⚠️', min: 3, max: 4, color: '#e8944b' },
+    { label: '0–2 🆘', min: 0, max: 2, color: '#e84b4b' },
+  ];
+  const max = Math.max(...bins.map(b => records.filter(r => r.score >= b.min && r.score <= b.max).length), 1);
+  const html = bins.map(b => {
+    const count = records.filter(r => r.score >= b.min && r.score <= b.max).length;
+    const w = Math.round(count / max * 100);
+    return `<div class="dist-row">
+      <div class="dist-label">${b.label}</div>
+      <div class="dist-bar-bg"><div class="dist-bar-fill" style="width:${w}%;background:${b.color}">${count > 0 ? count : ''}</div></div>
+      <div class="dist-count">${count}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('distBars').innerHTML = html;
+}
+
+function renderTable(records) {
+  if (records.length === 0) { showEmpty(); return; }
+  const rows = records.map(r => {
+    const cls = r.score >= 7 ? 'score-high' : r.score >= 5 ? 'score-mid' : 'score-low';
+    const date = new Date(r.ts);
+    const timeStr = date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+    return `<tr>
+      <td>${r.name}</td>
+      <td><span class="score-pill ${cls}">${r.score}/${r.total} (${r.pct}%)</span></td>
+      <td class="time-cell">${timeStr}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('playersContent').innerHTML = `
+    <table class="players-table">
+      <thead><tr><th>الاسم</th><th>النتيجة</th><th>الوقت</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function showEmpty() {
+  document.getElementById('totalPlayers').textContent = '0';
+  document.getElementById('avgScore').textContent = '—';
+  document.getElementById('topScore').textContent = '—';
+  document.getElementById('passRate').textContent = '—';
+  document.getElementById('distBars').innerHTML = '<div class="loading">لا توجد بيانات بعد</div>';
+  document.getElementById('playersContent').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-emoji">🚗</div>
+      <div class="empty-text">ما في أحد لعب لحد الآن<br>شارك اللعبة وارجعي هنا تشوفين النتائج!</div>
+    </div>`;
+}
+
+async function clearData() {
+  if (!confirm('تبين تمسحين كل النتائج؟')) return;
+  try {
+    const listResult = await window.storage.list('result:', true);
+    if (listResult && listResult.keys) {
+      for (const key of listResult.keys) {
+        try { await window.storage.delete(key, true); } catch(e) {}
+      }
+    }
+    loadData();
+  } catch(e) { alert('خطأ في المسح'); }
+}
+
+loadData();
+</script>
+</body>
+</html>
